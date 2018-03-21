@@ -1,0 +1,40 @@
+---
+title: "Ensamblaje De Novo de Transcritos con Trinity"
+author: "Gustavo Tapia"
+date: "16 de marzo de 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+D
+
+```{r hisat2}
+## Descarga y procesamiento fastqc de los datos de RNA-seq
+system("ls")
+setwd("/home/gtapiau/Descargas/FastQC/")
+#system("wget http://tepeu.lcg.unam.mx/~compu2/cei/datos/RNASeq_small.tar")
+system("tar -xvf RNASeq_small.tar")
+system("gunzip *.fq.gz")
+system("./fastqc *.fq")
+
+## Descarga y construcción del genoma de referencia
+#system("wget http://tepeu.lcg.unam.mx/~compu2/cei/datos/Genome.tar")
+system("/home/gtapiau/miniconda2/bin/hisat2-build Genome/Rhimi1_1_AssemblyScaffolds.fasta genome_reference")
+system("/home/gtapiau/miniconda2/bin/hisat2-inspect -s genome_reference")
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
