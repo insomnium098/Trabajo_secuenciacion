@@ -16,6 +16,11 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 D
 
 ```{r hisat2}
+#####################
+#Abrir R desde la terminal con "open -a RStudio" para que herede el PATH
+#####################
+
+
 ## Descarga y procesamiento fastqc de los datos de RNA-seq
 #Working directory
 working_directory <- getwd()
