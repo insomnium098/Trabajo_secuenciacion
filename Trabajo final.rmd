@@ -73,10 +73,86 @@ if (file.exists("Genome/Scaffolds.1.ht2") == FALSE){
 Mapear las secuencias de RNA-Seq al genoma de referencia, para descartar las secuencias que vienen del hongo.
 
 ```{r}
+working_directory <- getwd()
+setwd(working_directory)
 #Obtener lista de archivos .fq.gz
 lista_archivos_1 <- list.files(paste0(working_directory,"/RNASeq_small"),pattern = ".fq.gz")
-#Obtener los primeros siete caracteres de los nombres de archivos y obtener los unicos
-nombres_archivos_unicos <- unique(substr(lista_archivos_1, start = 1, stop = 7))
+
+#Obtener los archivos del hongo con bacteria y los curados
+nombres_hongo_con_bacteria <- lista_archivos_1[grep("*b",lista_archivos_1)]
+nombres_hongo_curados <- lista_archivos_1[grep("*c",lista_archivos_1)]
+
+
+
+
+############### HONGO CON BACTERIA
+##################################
+##################################
+#Obtener los primeros cuatro caracteres de los nombres de archivos y obtener los unicos
+nombres_unicos_bacteria <- unique(substr(nombres_hongo_con_bacteria, start = 1, stop = 4))
+nombres_archivos_unicos_bacteria <- unique (grep(paste(nombres_unicos_bacteria,collapse="|"), 
+                        nombres_hongo_con_bacteria, value=TRUE))
+
+#HACER UN DATAFRAME CON CADA CEPA DEL HONGO CON LA BACTERIA, Y ESCRIBIR LOS NOMBRES DE LOS ARCHIVOS 
+for (nombre in unique(nombres_unicos_bacteria)){
+  nombre_lista <- unique (grep(paste(nombre,collapse="|"), 
+                               nombres_hongo_con_bacteria, value=TRUE))
+  nombre_lista <- as.data.frame(nombre_lista)
+  colnames(nombre_lista) <- unique(substr(as.character(unique(grep(paste(nombre,collapse="|"), 
+                                                     nombres_hongo_con_bacteria, value=TRUE))),start = 1, stop = 4))
+  #Si el datasset no existe, se crea
+  if (!exists("dataset_bacteria")){
+    dataset_bacteria <- nombre_lista
+  }
+  #Si el dataset existe, se une 
+  if (exists("dataset_bacteria")){
+    temp_dataset <- nombre_lista
+    dataset_bacteria_final <- cbind(dataset_bacteria,temp_dataset)
+    rm(temp_dataset)
+  }
+}
+rm(dataset_bacteria)
+rm(nombre_lista)
+
+#########################################
+########################################
+
+
+############### HONGO SIN (CURADO) DE BACTERIA
+##################################
+##################################
+#Obtener los primeros cuatro caracteres de los nombres de archivos y obtener los unicos
+nombres_unicos_sin_bacteria <- unique(substr(nombres_hongo_curados, start = 1, stop = 4))
+nombres_archivos_unicos_sin_bacteria <- unique (grep(paste(nombres_unicos_sin_bacteria,collapse="|"), 
+                        nombres_hongo_curados, value=TRUE))
+
+#HACER UN DATAFRAME CON CADA CEPA DEL HONGO CON LA BACTERIA, Y ESCRIBIR LOS NOMBRES DE LOS ARCHIVOS 
+for (nombre in unique(nombres_unicos_sin_bacteria)){
+  nombre_lista <- unique (grep(paste(nombre,collapse="|"), 
+                               nombres_hongo_curados, value=TRUE))
+  nombre_lista <- as.data.frame(nombre_lista)
+  colnames(nombre_lista) <- unique(substr(as.character(unique(grep(paste(nombre,collapse="|"), 
+                                                     nombres_hongo_curados, value=TRUE))),start = 1, stop = 4))
+  #Si el datasset no existe, se crea
+  if (!exists("dataset_curados")){
+    dataset_curados<- nombre_lista
+  }
+  #Si el dataset existe, se une 
+  if (exists("dataset_curados")){
+    temp_dataset <- nombre_lista
+    dataset_curados_final <- cbind(dataset_curados,temp_dataset)
+    rm(temp_dataset)
+  }
+}
+rm(dataset_curados)
+rm(nombre_lista)
+
+
+#########################################
+########################################
+  
+
+
 ```
 
 ## Including Plots
