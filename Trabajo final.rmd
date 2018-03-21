@@ -51,8 +51,17 @@ if (dir.exists("Genome/") == FALSE){
   print("La carpeta Genome ya existe")
 }
 
-system("hisat2-build Genome/Rhimi1_1_AssemblyScaffolds.fasta Scaffolds")
-system("hisat2-inspect -s Scaffolds")
+
+if (file.exists("Genome/Scaffolds.1.ht2") == FALSE){
+  print("Descargando archivos Genome")
+  system("hisat2-build Genome/Rhimi1_1_AssemblyScaffolds.fasta Scaffolds")
+  system("hisat2-inspect -s Scaffolds")
+  
+} else {
+  print("El Index del Genome ya existe")
+}
+
+
 ```
 
 ## Including Plots
