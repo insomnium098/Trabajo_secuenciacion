@@ -1,6 +1,6 @@
 ---
 title: "Ensamblaje De Novo de Transcritos con Trinity"
-author: "Gustavo Tapia"
+author: "Gustavo Tapia, Josue Cerecedo, Antonio Martinez"
 date: "16 de marzo de 2018"
 output: html_document
 ---
