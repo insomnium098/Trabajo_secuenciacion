@@ -17,17 +17,34 @@ D
 
 ```{r hisat2}
 ## Descarga y procesamiento fastqc de los datos de RNA-seq
-system("ls")
-setwd("/home/gtapiau/Descargas/FastQC/")
-#system("wget http://tepeu.lcg.unam.mx/~compu2/cei/datos/RNASeq_small.tar")
-system("tar -xvf RNASeq_small.tar")
-system("gunzip *.fq.gz")
-system("./fastqc *.fq")
+#Working directory
+working_directory <- getwd()
+setwd(working_directory)
+
+if (dir.exists("RNASeq_small/") == FALSE){
+  print("Descargando archivos de RNASeq")
+  system("wget http://tepeu.lcg.unam.mx/~compu2/cei/datos/RNASeq_small.tar")
+  system("tar -xvf RNASeq_small.tar")
+  system("gunzip *.fq.gz")
+  
+} else {
+  print("La carpeta RNASeq ya existe")
+}
+
+
+#FastQC to all files
+system("fastqc RNASeq_small/*.fq.gz")
+#MultiQC
+system("multiqc RNASeq_small")
+
 
 ## Descarga y construcción del genoma de referencia
+#Removi la direccion completa de las aplicaciones, deberian estar en el PATH
 #system("wget http://tepeu.lcg.unam.mx/~compu2/cei/datos/Genome.tar")
-system("/home/gtapiau/miniconda2/bin/hisat2-build Genome/Rhimi1_1_AssemblyScaffolds.fasta genome_reference")
-system("/home/gtapiau/miniconda2/bin/hisat2-inspect -s genome_reference")
+#system("tar -xvf Genome.tar")
+
+system("hisat2-build Genome/Rhimi1_1_AssemblyScaffolds.fasta Scaffolds")
+system("hisat2-inspect -s Scaffolds")
 ```
 
 ## Including Plots
