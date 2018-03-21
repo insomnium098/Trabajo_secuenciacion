@@ -40,8 +40,16 @@ system("multiqc RNASeq_small")
 
 ## Descarga y construcción del genoma de referencia
 #Removi la direccion completa de las aplicaciones, deberian estar en el PATH
-#system("wget http://tepeu.lcg.unam.mx/~compu2/cei/datos/Genome.tar")
-#system("tar -xvf Genome.tar")
+
+
+if (dir.exists("Genome/") == FALSE){
+  print("Descargando archivos Genome")
+  system("wget http://tepeu.lcg.unam.mx/~compu2/cei/datos/Genome.tar")
+  system("tar -xvf Genome.tar")
+  
+} else {
+  print("La carpeta Genome ya existe")
+}
 
 system("hisat2-build Genome/Rhimi1_1_AssemblyScaffolds.fasta Scaffolds")
 system("hisat2-inspect -s Scaffolds")
