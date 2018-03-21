@@ -69,6 +69,16 @@ if (file.exists("Genome/Scaffolds.1.ht2") == FALSE){
 
 ```
 
+
+Mapear las secuencias de RNA-Seq al genoma de referencia, para descartar las secuencias que vienen del hongo.
+
+```{r}
+#Obtener lista de archivos .fq.gz
+lista_archivos_1 <- list.files(paste0(working_directory,"/RNASeq_small"),pattern = ".fq.gz")
+#Obtener los primeros siete caracteres de los nombres de archivos y obtener los unicos
+nombres_archivos_unicos <- unique(substr(lista_archivos_1, start = 1, stop = 7))
+```
+
 ## Including Plots
 
 You can also embed plots, for example:
