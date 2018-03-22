@@ -224,6 +224,9 @@ for (i in 1:length(lista_archivos_sam)){
   archivo_bam <- gsub(".sam",".bam",archivo_sam)
   comando_bam <- paste0("cd RNASeq_small/Resultados/ && samtools view -Sb"," ", archivo_sam," ",">"," ",archivo_bam)
   system(comando_bam)
+  #Remover archivos .sam
+  comando_rm_sam <- paste0("cd RNASeq_small/Resultados/ && ", "rm", " ", archivo_sam)
+  system(comando_rm_sam)
 }
 
 
@@ -231,6 +234,38 @@ for (i in 1:length(lista_archivos_sam)){
 
 
 ```
+
+Usar MultiQC para visualizar y comparar los resultados de QC y mapeo. Pueden encontrar evidencia de que hay un organismo extraño contaminando las muestras?
+
+Ensamblar con Trinity las secuencias que NO mapean al hongo
+```{r}
+working_directory <- getwd()
+setwd(working_directory)
+
+library(parallel)
+numero_threads <- detectCores()
+
+#Obtener lista de archivos fq
+lista_archivos_fq <- list.files(paste0(working_directory,"/RNASeq_small/Resultados"),pattern = ".fq")
+
+nombres_archivos_left <- lista_archivos_fq[grepl(".1.fq",lista_archivos_fq, fixed=TRUE)]
+nombres_archivos_left <- paste(nombres_archivos_left, collapse=" ")
+
+nombres_archivos_right <- lista_archivos_fq[grepl(".2.fq",lista_archivos_fq, fixed=TRUE)]
+nombres_archivos_right <- paste(nombres_archivos_right, collapse=" ")
+
+#Comando trinity
+
+comando_trinity <- paste0("Trinity --seqType fq --left ",nombres_archivos_left," ",
+                          "--right ",nombres_archivos_right," ","--CPU ", numero_threads, " ",
+                          "--max_memory 8G")
+comando_trinity_final <- paste0("cd RNASeq_small/Resultados/ && ", comando_trinity)
+
+system(comando_trinity_final)
+
+```
+
+
 
 ## Including Plots
 
