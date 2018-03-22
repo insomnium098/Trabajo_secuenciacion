@@ -150,8 +150,69 @@ rm(nombre_lista)
 
 #########################################
 ########################################
-
 #############HACER MAPEO CON HISAT2 PARA CADA CEPA
+
+dir.create("RNASeq_small/Resultados")
+
+###############Bacteria
+######
+numero_muestras <- length(colnames(dataset_bacteria_final))
+
+#####Elegir numero de threads para hacer mas rapido el analisis
+library(parallel)
+numero_threads <- detectCores()
+
+for (i in 1:numero_muestras){
+  nombre_de_muestra <- colnames(dataset_bacteria_final)[i]
+  nombres_archivos <- as.character(dataset_bacteria_final[,i])
+  nombres_archivos <- paste(nombres_archivos, collapse=", ")
+  nombres_archivos <- gsub(" ","",nombres_archivos)
+  nombre_unaligned <- paste0(nombre_de_muestra,"-unaligned.sam")
+  ####Generar comando en bash
+  ubicacion_genome <- paste0(working_directory,"/","Genome/Scaffolds")
+  comando_align <- paste0("hisat2 -x",ubicacion_genome," ","-U"," ",nombres_archivos, " ", "-S", " ","Resultados/",nombre_de_muestra,".sam", " ","--un"," ","Resultados/",nombre_unaligned, " ", "-p"," ", numero_threads)
+  comando_final <- paste0("cd RNASeq_small/ &&",comando_align)
+  ##Correr comando
+  system(comando_final)
+}
+
+###########Hongo curado de Bacteria
+######
+
+numero_muestras <- length(colnames(dataset_curados_final))
+
+
+for (i in 1:numero_muestras){
+  nombre_de_muestra <- colnames(dataset_curados_final)[i]
+  nombres_archivos <- as.character(dataset_curados_final[,i])
+  nombres_archivos <- paste(nombres_archivos, collapse=", ")
+  nombres_archivos <- gsub(" ","",nombres_archivos)
+  nombre_unaligned <- paste0(nombre_de_muestra,"-unaligned.sam")
+  ####Generar comando en bash
+  ubicacion_genome <- paste0(working_directory,"/","Genome/Scaffolds")
+  comando_align <- paste0("hisat2 -x",ubicacion_genome," ","-U"," ",nombres_archivos, " ", "-S", " ","Resultados/",nombre_de_muestra,".sam", " ","--un"," ","Resultados/",nombre_unaligned, " ", "-p"," ", numero_threads)
+  comando_final <- paste0("cd RNASeq_small/ &&",comando_align)
+  ##Correr comando
+  system(comando_final)
+}
+
+####Generar archivos .bam y eliminar archivos .sam
+###NOTA: Los archivos que no alinearon no se pueden convertir en .bam, se omiten
+
+lista_archivos_sam <- list.files(paste0(working_directory,"/RNASeq_small/Resultados"),pattern = ".sam")
+lista_archivos_sam <- unique(gsub("-unaligned","",lista_archivos_sam))
+
+
+for (i in 1:length(lista_archivos_sam)){
+  archivo_sam <- lista_archivos_sam[i]
+  archivo_bam <- gsub(".sam",".bam",archivo_sam)
+  comando_bam <- paste0("cd RNASeq_small/Resultados/ && samtools view -Sb"," ", archivo_sam," ",">"," ",archivo_bam)
+  system(comando_bam)
+  #Remover archivos .sam
+  comando_rm_sam <- paste0("cd RNASeq_small/Resultados/ && ", "rm", " ", archivo_sam)
+  system(comando_rm_sam)
+}
+
   
 
 
