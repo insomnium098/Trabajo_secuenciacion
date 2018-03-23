@@ -270,6 +270,116 @@ comando_trinity_final <- paste0("cd RNASeq_small/Resultados/ && ", comando_trini
 system(comando_trinity_final)
 
 ```
+Kallisto
+
+```{r}
+working_directory <- getwd()
+setwd(working_directory)
+
+dir.create("RNASeq_small/Resultados/kallisto")
+
+path_trinity <- paste0("RNASeq_small/Resultados/trinity_out_dir/")
+path_resultados <- paste0("RNASeq_small/Resultados/")
+path_kallisto <- paste0(working_directory,"/RNASeq_small/Resultados/kallisto/trinity")
+
+####Crear indice del fasta de Trinity
+kallisto_index <- paste0("kallisto index -i ", path_kallisto ," Trinity.fasta")
+
+comando_kallisto_index <- paste0("cd ",path_trinity," ","&&"," ",kallisto_index)
+
+system(comando_kallisto_index)
+
+
+#####Cuantificar con kallisto
+
+#Obtener archivos fastq
+
+lista_archivos_fq <- list.files(paste0(working_directory,"/RNASeq_small/Resultados"),pattern = ".fq")
+
+lista_archivos_fq <- paste(lista_archivos_fq, collapse=" ")
+
+####
+
+path_kallisto_quant <- paste0(working_directory,"/RNASeq_small/Resultados/kallisto/")
+
+comando_kallisto_quant <- paste0("cd ", working_directory,"/RNASeq_small/Resultados/"," ","&& ", "kallisto quant -i ",
+                                 path_kallisto," -o ",path_kallisto_quant,"output ",lista_archivos_fq)
+
+system(comando_kallisto_quant)
+
+
+####Obtener TSV con los resultados
+library(ShortRead)
+library(annotate)
+resultados_kallisto <- read.delim(paste0(path_kallisto_quant,"output/abundance.tsv"))
+resultados_kallisto <-resultados_kallisto[order(resultados_kallisto$est_counts, decreasing = TRUE),]
+#Obtener las primeras 100 secuencias
+kallisto_100 <- as.character(resultados_kallisto[1:100,]$target_id)
+
+###Leer archivo fasta de trinity
+archivo_fasta_trinity <- paste0(path_trinity,"Trinity.fasta")
+fasta_trinity <- readDNAStringSet(archivo_fasta_trinity)
+
+#Extraer las secuencias de los primeros 100 de kallisto
+
+nombres_mal_fasta <- names(fasta_trinity)
+nombres_bien_fasta <- sub(" .*", "", nombres_mal_fasta)
+names(fasta_trinity) <- nombres_bien_fasta
+
+for (i in 0:length(kallisto_100)){
+  secuencia <- kallisto_100[i]
+  secuencia_grep <- paste0("^",secuencia,"$")
+  extraccion <- as.data.frame(fasta_trinity[grep(secuencia_grep,names(fasta_trinity))])
+  #Si el datasset no existe, se crea
+    if (!exists("dataset_final_blast")){
+      dataset_final_blast <- extraccion
+    }
+    #Si el dataset existe, se une 
+    if (exists("dataset_final_blast")){
+      temp_dataset <- extraccion
+      dataset_final_blast <- rbind(dataset_final_blast,temp_dataset)
+      rm(temp_dataset)
+    }
+}
+
+####Hacer blast
+
+id_secuencias <- as.character(dataset_final_blast$x)
+
+id_secuencias <- id_secuencias[1:5]
+
+
+nombres_secuencias <- as.character(rownames(dataset_final_blast))
+
+for (i in 0:length(id_secuencias)){
+  
+  i <- i + 1
+  numero_iteracion <- paste0("Secuencia ", i, " de ", length(id_secuencias)," secuencias")
+  
+  print(numero_iteracion)
+  secuencia_blast <- id_secuencias[i]
+  nombre_secuencia_blast <- nombres_secuencias[i]
+  
+  query_blast <- blastSequences(secuencia_blast,as="data.frame", database = "nr", hitListSize = 10)
+  
+  nombre_secuencia_blast_rep <- rep(nombre_secuencia_blast,length(rownames(query_blast)))
+  query_blast$TRINITY_SEQUENCE <- nombre_secuencia_blast
+  #Si el datasset no existe, se crea
+    if (!exists("dataset_final_query_blast")){
+      dataset_final_query_blast <- query_blast
+    }
+    #Si el dataset existe, se une 
+    if (exists("dataset_final_query_blast")){
+      temp_dataset <- query_blast
+      dataset_final_query_blast <- rbind(dataset_final_query_blast,temp_dataset)
+      rm(temp_dataset)
+    }
+  
+
+}
+
+
+```
 
 
 
