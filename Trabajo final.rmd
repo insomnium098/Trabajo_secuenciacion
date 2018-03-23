@@ -256,6 +256,13 @@ nombres_archivos_right <- paste(nombres_archivos_right, collapse=" ")
 
 #Comando trinity
 
+if (dir.exists("RNASeq_small/Resultados/trinity_out_dir") == TRUE){
+  system("rm -rf RNASeq_small/Resultados/trinity_out_dir")
+  
+} else {
+  print("La carpeta RNASeq ya existe")
+}
+
 comando_trinity <- paste0("Trinity --seqType fq --left ",nombres_archivos_left," ",
                           "--right ",nombres_archivos_right," ","--CPU ", numero_threads, " ",
                           "--max_memory 8G")
