@@ -152,6 +152,26 @@ rm(nombre_lista)
 ########################################
 #############HACER MAPEO CON HISAT2 PARA CADA CEPA
 
+<<<<<<< HEAD
+#####Bacteria
+numero_muestras <- length(colnames(dataset_bacteria_final))
+
+for (i in 1:numero_muestras){
+  nombre_de_muestra <- colnames(dataset_bacteria_final)[i]
+  nombres_archivos <- as.character(dataset_bacteria_final[,i])
+  nombres_archivos <- paste(nombres_archivos, collapse=", ")
+  nombres_archivos <- gsub(" ","",nombres_archivos)
+  ####Generar comando en bash
+  dir.create("Resultados")
+  ubicacion_genome <- paste0(working_directory,"/","Genome/Scaffolds")
+  comando_align <- paste0("hisat2 -x",ubicacion_genome," ","-U"," ",nombres_archivos, " ", "-S", " ",
+                          nombre_de_muestra,".sam")
+  comando_final <- paste0("cd RNASeq_small|",comando_align)
+  ##Correr comando
+  system(comando_align)
+}
+
+=======
 dir.create("RNASeq_small/Resultados")
 
 ###############Bacteria
@@ -230,6 +250,7 @@ for (i in 1:length(lista_archivos_sam)){
 }
 
 
+>>>>>>> 04b4b15ef1ba28fc0eb3ad26a5b85fc52a61fe8e
   
 
 
