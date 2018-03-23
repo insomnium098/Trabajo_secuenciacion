@@ -249,10 +249,10 @@ numero_threads <- detectCores()
 lista_archivos_fq <- list.files(paste0(working_directory,"/RNASeq_small/Resultados"),pattern = ".fq")
 
 nombres_archivos_left <- lista_archivos_fq[grepl(".1.fq",lista_archivos_fq, fixed=TRUE)]
-nombres_archivos_left <- paste(nombres_archivos_left, collapse=" ")
+nombres_archivos_left <- paste(nombres_archivos_left, collapse=",")
 
 nombres_archivos_right <- lista_archivos_fq[grepl(".2.fq",lista_archivos_fq, fixed=TRUE)]
-nombres_archivos_right <- paste(nombres_archivos_right, collapse=" ")
+nombres_archivos_right <- paste(nombres_archivos_right, collapse=",")
 
 #Comando trinity
 
@@ -260,7 +260,6 @@ if (dir.exists("RNASeq_small/Resultados/trinity_out_dir") == TRUE){
   system("rm -rf RNASeq_small/Resultados/trinity_out_dir")
   
 } else {
-  print("La carpeta RNASeq ya existe")
 }
 
 comando_trinity <- paste0("Trinity --seqType fq --left ",nombres_archivos_left," ",
