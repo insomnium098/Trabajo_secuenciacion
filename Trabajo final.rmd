@@ -152,7 +152,6 @@ rm(nombre_lista)
 ########################################
 #############HACER MAPEO CON HISAT2 PARA CADA CEPA
 
-<<<<<<< HEAD
 #####Bacteria
 numero_muestras <- length(colnames(dataset_bacteria_final))
 
@@ -171,7 +170,7 @@ for (i in 1:numero_muestras){
   system(comando_align)
 }
 
-=======
+
 dir.create("RNASeq_small/Resultados")
 
 ###############Bacteria
