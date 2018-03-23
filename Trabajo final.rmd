@@ -378,7 +378,8 @@ for (i in 0:length(id_secuencias)){
   secuencia_blast <- id_secuencias[i]
   nombre_secuencia_blast <- nombres_secuencias[i]
   
-  query_blast <- blastSequences(secuencia_blast,as="data.frame", database = "nr", hitListSize = 10)
+  query_blast <- blastSequences(secuencia_blast,as="data.frame", database = "nr", hitListSize = 10,
+                                timeout = 60)
   
   nombre_secuencia_blast_rep <- rep(nombre_secuencia_blast,length(rownames(query_blast)))
   query_blast$TRINITY_SEQUENCE <- nombre_secuencia_blast
