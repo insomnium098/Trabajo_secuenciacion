@@ -367,9 +367,6 @@ for (i in 0:length(kallisto_100)){
 
 id_secuencias <- as.character(dataset_final_blast$x)
 
-id_secuencias <- id_secuencias[1:5]
-
-
 nombres_secuencias <- as.character(rownames(dataset_final_blast))
 
 for (i in 0:length(id_secuencias)){
@@ -398,6 +395,8 @@ for (i in 0:length(id_secuencias)){
   
 
 }
+
+write.csv(dataset_final_query_blast,"dataset_query_blast_100.csv")
 
 
 ```
